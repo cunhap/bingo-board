@@ -2,20 +2,355 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+
+  /* Your existing base styles... */
+
+  .christmas {
+    --background: 345 80% 95%; /* Brighter red/pink background */
+    --foreground: 349 75% 25%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 349 75% 25%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 349 75% 25%;
+
+    --primary: 142 76% 36%; /* Christmas green */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 349 75% 44%; /* Bright red */
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 142 76% 36%;
+    --muted-foreground: 349 75% 25%;
+
+    --accent: 142 76% 36%;
+    --accent-foreground: 0 0% 100%;
+
+    --border: 349 75% 44%;
+    --input: 349 75% 44%;
+    --ring: 349 75% 44%;
+
+    background-image: radial-gradient(circle at 25px 25px, rgba(255, 255, 255, 0.2) 2%, transparent 0%),
+      radial-gradient(circle at 75px 75px, rgba(255, 255, 255, 0.2) 2%, transparent 0%);
+    background-size: 100px 100px;
+
+    /* Decorative border for cards */
+    --christmas-lights: repeating-linear-gradient(
+      90deg,
+      #ff0000 0 10px,
+      #00ff00 10px 20px,
+      #ffff00 20px 30px,
+      #0000ff 30px 40px
+    );
+  }
+
+  /* Holly decoration */
+  .christmas .bingo-card::before {
+    content: '🎄';
+    position: absolute;
+    top: -15px;
+    left: -15px;
+    font-size: 30px;
+    z-index: 10;
+  }
+
+  .christmas .bingo-card::after {
+    content: '🎅';
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    font-size: 30px;
+    z-index: 10;
+  }
+
+  /* Christmas lights border effect */
+  .christmas .bingo-card {
+    border: 4px solid transparent;
+    border-image: var(--christmas-lights);
+    border-image-slice: 1;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.2),
+      0 0 25px rgba(0, 255, 0, 0.2);
+  }
+
+  /* Candy cane striped buttons in unselected state */
+  .christmas .cell-button:not(.selected) {
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 255, 255, 0.9) 10px,
+      rgba(255, 0, 0, 0.1) 10px,
+      rgba(255, 0, 0, 0.1) 20px
+    );
+  }
+
+  /* Ornaments in corners */
+  .christmas .bingo-container {
+    position: relative;
+  }
+
+  .christmas .bingo-container::before {
+    content: '🎁';
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    font-size: 40px;
+    z-index: 10;
+  }
+
+  .christmas .bingo-container::after {
+    content: '⭐';
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    font-size: 40px;
+    z-index: 10;
+  }
+
+  /* Decorative header */
+  .christmas .board-header {
+    text-align: center;
+    font-weight: bold;
+    background: linear-gradient(45deg, #ff0000, #00ff00, #ff0000);
+    background-size: 200% 200%;
+    animation: gradient 5s ease infinite;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* Festive selected state */
+  .christmas .cell-button.selected {
+    background: linear-gradient(45deg, #ff0000, #00ff00);
+    color: white;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    transform: scale(1.02);
+    transition: all 0.3s ease;
+  }
+
+  /* Christmas bells in dialog corners */
+  .christmas .dialog::before {
+    content: '🔔';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+  }
+
+  .christmas .dialog::after {
+    content: '🔔';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  
+  .christmas.dark {
+    --background: 349 75% 25%;
+    --foreground: 0 0% 100%;
+
+    --card: 349 75% 20%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 349 75% 20%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 142 76% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 349 75% 44%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 142 76% 45%;
+    --muted-foreground: 0 0% 90%;
+
+    --accent: 142 76% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --border: 349 75% 44%;
+    --input: 349 75% 44%;
+    --ring: 349 75% 44%;
+
+    background-image: radial-gradient(circle at 25px 25px, rgba(255, 255, 255, 0.1) 2%, transparent 0%),
+      radial-gradient(circle at 75px 75px, rgba(255, 255, 255, 0.1) 2%, transparent 0%);
+    background-size: 100px 100px;
+  }
+
+  /* Add festive styling for cards */
+  .christmas .bingo-card {
+    border-width: 2px;
+    border-style: solid;
+    border-image: linear-gradient(45deg, #22c55e, #ef4444, #22c55e) 1;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+  }
+
+  .christmas.dark .bingo-card {
+    border-image: linear-gradient(45deg, #4ade80, #f87171, #4ade80) 1;
+    box-shadow: 0 0 15px rgba(248, 113, 113, 0.2);
+  }
+
+  /* Festive button styling */
+  .christmas .cell-button {
+    border-width: 2px;
+    transition: all 0.3s ease;
+  }
+
+  .christmas .cell-button:not(.selected):hover {
+    background: linear-gradient(45deg, rgba(34, 197, 94, 0.1), rgba(239, 68, 68, 0.1));
+    transform: scale(1.02);
+  }
+
+  /* Add snowflakes or decorative elements */
+  .christmas::before {
+    content: '❄';
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    font-size: 24px;
+    color: #ef4444;
+    opacity: 0.5;
+  }
+
+  .christmas::after {
+    content: '🎄';
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    font-size: 24px;
+  }
+
+  /* Animate selected cells in Christmas theme */
+  .christmas .selected {
+    animation: festiveGlow 2s infinite alternate;
+  }
+
+  @keyframes festiveGlow {
+    from {
+      box-shadow: 0 0 5px rgba(239, 68, 68, 0.5),
+        0 0 10px rgba(34, 197, 94, 0.5);
+    }
+    to {
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.8),
+        0 0 20px rgba(34, 197, 94, 0.8);
+    }
+  }
+
+  @keyframes snowfall {
+    0% {
+      transform: translateY(-20px) rotate(0deg);
+    }
+    25% {
+      transform: translateY(25vh) rotate(90deg) translateX(10px);
+    }
+    50% {
+      transform: translateY(50vh) rotate(180deg) translateX(-10px);
+    }
+    75% {
+      transform: translateY(75vh) rotate(270deg) translateX(10px);
+    }
+    100% {
+      transform: translateY(100vh) rotate(360deg);
+    }
+  }
+
+  /* Only show snow in Christmas theme */
+  .christmas .snowfall {
+    display: block;
+  }
+
+  .snowfall {
+    display: none;
+  }
+
+  /* Add some blur to background snowflakes for depth */
+  .christmas .snowflake {
+    filter: blur(0.5px);
+    will-change: transform;
+  }
+
+  .christmas .snowflake.back {
+    filter: blur(1.5px);
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }

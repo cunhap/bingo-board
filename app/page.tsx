@@ -1,101 +1,200 @@
-import Image from "next/image";
+"use client"
+
+import React, { useState, useEffect } from 'react';
+import { CreateBoardDialog } from '@/components/CreateBoardDialog';
+import { BoardSelector } from '@/components/BoardSelector';
+import { BingoCard } from '@/components/BingoCard';
+import { ExportImportButtons } from '@/components/ExportImportButtons';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { BoardState } from '@/types';
+import ThemeToggles from '@/components/ThemeToggles';
+import Snow from '@/components/Snow';
+
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [boards, setBoards] = useState<BoardState[]>([]);
+  const [currentBoardId, setCurrentBoardId] = useState<string | null>(null);
+  const [showFireworks, setShowFireworks] = useState(false);
+  const [isChristmas, setIsChristmas] = useState(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    // Initialize Christmas theme state
+    const savedChristmas = localStorage.getItem('theme-christmas') === 'true';
+    setIsChristmas(savedChristmas);
+  }, []);
+
+  useEffect(() => {
+    const savedBoards = localStorage.getItem('bingo-boards');
+    if (savedBoards) {
+      const loadedBoards = JSON.parse(savedBoards);
+      setBoards(loadedBoards);
+      if (loadedBoards.length > 0) {
+        setCurrentBoardId(loadedBoards[0].id);
+      }
+    }
+  }, []);
+
+  const currentBoard = boards.find(b => b.id === currentBoardId);
+
+  const checkWin = (selections: number[]) => {
+    for (let i = 0; i < 4; i++) {
+      let rowComplete = true;
+      for (let j = 0; j < 4; j++) {
+        if (!selections.includes(i * 4 + j)) {
+          rowComplete = false;
+          break;
+        }
+      }
+      if (rowComplete) return true;
+    }
+
+    for (let i = 0; i < 4; i++) {
+      let colComplete = true;
+      for (let j = 0; j < 4; j++) {
+        if (!selections.includes(i + j * 4)) {
+          colComplete = false;
+          break;
+        }
+      }
+      if (colComplete) return true;
+    }
+
+    return false;
+  };
+
+  const handleCreateBoard = (newBoard: BoardState) => {
+    const newBoards = [...boards, newBoard];
+    setBoards(newBoards);
+    setCurrentBoardId(newBoard.id);
+    localStorage.setItem('bingo-boards', JSON.stringify(newBoards));
+  };
+
+  const handleToggleCell = (index: number) => {
+    if (!currentBoard) return;
+
+    setBoards(prevBoards => {
+      const newBoards = prevBoards.map(board => {
+        if (board.id !== currentBoardId) return board;
+
+        const newSelectedCells = [...board.selectedCells];
+        const cellIndex = newSelectedCells.indexOf(index);
+
+        if (cellIndex === -1) {
+          newSelectedCells.push(index);
+          if (checkWin(newSelectedCells)) {
+            setShowFireworks(true);
+            setTimeout(() => setShowFireworks(false), 2000);
+          }
+        } else {
+          newSelectedCells.splice(cellIndex, 1);
+        }
+
+        return {
+          ...board,
+          selectedCells: newSelectedCells
+        };
+      });
+
+      localStorage.setItem('bingo-boards', JSON.stringify(newBoards));
+      return newBoards;
+    });
+  };
+
+  const handleUpdateLabel = (newLabel: string) => {
+    setBoards(prevBoards => {
+      const newBoards = prevBoards.map(board =>
+        board.id === currentBoardId ? { ...board, label: newLabel } : board
+      );
+      localStorage.setItem('bingo-boards', JSON.stringify(newBoards));
+      return newBoards;
+    });
+  };
+
+  const handleDeleteBoard = () => {
+    setBoards(prevBoards => {
+      const newBoards = prevBoards.filter(board => board.id !== currentBoardId);
+      localStorage.setItem('bingo-boards', JSON.stringify(newBoards));
+      if (newBoards.length > 0) {
+        setCurrentBoardId(newBoards[0].id);
+      } else {
+        setCurrentBoardId(null);
+      }
+      return newBoards;
+    });
+  };
+
+  const handleImport = (importedBoards: BoardState[]) => {
+    setBoards(importedBoards);
+    if (importedBoards.length > 0) {
+      setCurrentBoardId(importedBoards[0].id);
+    } else {
+      setCurrentBoardId(null);
+    }
+    localStorage.setItem('bingo-boards', JSON.stringify(importedBoards));
+  };
+
+  return (
+    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-300">
+      <div className="snowfall">
+        <Snow />
+      </div>
+      <div className="space-y-8 w-full max-w-2xl mx-auto p-4">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <CreateBoardDialog onCreateBoard={handleCreateBoard} />
+              <BoardSelector
+                boards={boards}
+                currentBoardId={currentBoardId}
+                onBoardSelect={setCurrentBoardId}
+              />
+            </div>
+            <ThemeToggles/>
+          </div>
+          <ExportImportButtons
+            boards={boards}
+            onImport={handleImport}
+          />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+
+        {currentBoard && (
+          <BingoCard
+            board={currentBoard}
+            showFireworks={showFireworks}
+            onToggleCell={handleToggleCell}
+            onUpdateLabel={handleUpdateLabel}
+            onDelete={handleDeleteBoard}
+            isChristmas={isChristmas}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        )}
+
+        <style jsx global>{`
+          @keyframes firework-1 {
+            0% { box-shadow: 0 0 0 -2px #ff0000; }
+            50% { box-shadow: 0 0 50px 50px transparent; }
+            100% { box-shadow: 0 0 100px 100px transparent; }
+          }
+          @keyframes firework-2 {
+            0% { box-shadow: 0 0 0 -2px #00ff00; }
+            50% { box-shadow: 0 0 50px 50px transparent; }
+            100% { box-shadow: 0 0 100px 100px transparent; }
+          }
+          @keyframes firework-3 {
+            0% { box-shadow: 0 0 0 -2px #0000ff; }
+            50% { box-shadow: 0 0 50px 50px transparent; }
+            100% { box-shadow: 0 0 100px 100px transparent; }
+          }
+          @keyframes firework-4 {
+            0% { box-shadow: 0 0 0 -2px #ffff00; }
+            50% { box-shadow: 0 0 50px 50px transparent; }
+            100% { box-shadow: 0 0 100px 100px transparent; }
+          }
+          .animate-firework-1 { animation: firework-1 1s ease-out forwards; }
+          .animate-firework-2 { animation: firework-2 1s ease-out 0.2s forwards; }
+          .animate-firework-3 { animation: firework-3 1s ease-out 0.4s forwards; }
+          .animate-firework-4 { animation: firework-4 1s ease-out 0.6s forwards; }
+        `}</style>
+      </div>
     </div>
   );
 }

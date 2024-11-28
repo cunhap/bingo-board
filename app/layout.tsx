@@ -7,6 +7,7 @@ const geistSans = localFont({
   variable: "--font-geist-sans",
   weight: "100 900",
 });
+
 const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
@@ -20,16 +21,44 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${geistSans.variable} ${geistMono.variable}`}
+    >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                function getTheme() {
+                  const savedTheme = localStorage.getItem('theme');
+                  const savedChristmas = localStorage.getItem('theme-christmas');
+
+                  // Apply Christmas theme if enabled
+                  if (savedChristmas === 'true') {
+                    document.documentElement.classList.add('christmas');
+                  }
+
+                  // Apply dark/light theme
+                  if (savedTheme) return savedTheme;
+                  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                }
+
+                const theme = getTheme();
+                if (theme === 'dark') document.documentElement.classList.add('dark');
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body className="min-h-screen bg-background font-sans antialiased">
         {children}
       </body>
     </html>
-  );
+  )
 }
