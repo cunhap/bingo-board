@@ -19,7 +19,7 @@ interface BoardSelectorProps {
 export function BoardSelector({ boards, currentBoardId, onBoardSelect }: BoardSelectorProps) {
   return (
     <Select value={currentBoardId || undefined} onValueChange={onBoardSelect}>
-      <SelectTrigger className="w-[280px] bg-white dark:bg-slate-800">
+      <SelectTrigger className="w-full sm:w-[280px] bg-white dark:bg-slate-800">
         <SelectValue placeholder="Select a board" />
       </SelectTrigger>
       <SelectContent className="bg-white dark:bg-slate-800">

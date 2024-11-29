@@ -5,7 +5,6 @@ import { CreateBoardDialog } from '@/components/CreateBoardDialog';
 import { BoardSelector } from '@/components/BoardSelector';
 import { BingoCard } from '@/components/BingoCard';
 import { ExportImportButtons } from '@/components/ExportImportButtons';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { BoardState } from '@/types';
 import ThemeToggles from '@/components/ThemeToggles';
 import Snow from '@/components/Snow';
@@ -140,21 +139,27 @@ export default function Home() {
       </div>
       <div className="space-y-8 w-full max-w-2xl mx-auto p-4">
         <div className="space-y-4">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
               <CreateBoardDialog onCreateBoard={handleCreateBoard} />
-              <BoardSelector
-                boards={boards}
-                currentBoardId={currentBoardId}
-                onBoardSelect={setCurrentBoardId}
-              />
+              <div className="w-full sm:w-auto">
+                <BoardSelector
+                  boards={boards}
+                  currentBoardId={currentBoardId}
+                  onBoardSelect={setCurrentBoardId}
+                />
+              </div>
             </div>
-            <ThemeToggles/>
+            <div className="flex sm:ml-auto">
+              <ThemeToggles/>
+            </div>
           </div>
-          <ExportImportButtons
-            boards={boards}
-            onImport={handleImport}
-          />
+          <div className="w-full">
+            <ExportImportButtons
+              boards={boards}
+              onImport={handleImport}
+            />
+          </div>
         </div>
 
         {currentBoard && (

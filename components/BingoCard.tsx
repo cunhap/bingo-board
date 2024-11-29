@@ -62,8 +62,11 @@ export function BingoCard({
                 onClick={() => onToggleCell(index)}
                 className={`
                 cell-button
-                p-4 text-sm text-center border rounded-lg min-h-24
+                p-2 text-xs sm:p-4 sm:text-sm text-center border rounded-lg
+                min-h-16 sm:min-h-24
                 transition-colors duration-200
+                break-words hyphens-auto
+                flex items-center justify-center
                 ${board.selectedCells.includes(index) ? 'selected' : ''}
                 ${board.selectedCells.includes(index)
                   ? 'bg-blue-500 text-white border-blue-600'
